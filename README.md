@@ -39,5 +39,44 @@ A lightweight, secure command-line calculator written in pure Python. Instead of
 ### Running the App
 Clone the repository and run:
 
+## output
+=======================================================
+ Python Multi-Function Calculator
+=======================================================
+• Supports: +, -, *, /, //, %, ** (power)
+• Functions: sqrt, cbrt, sin, cos, tan, log, factorial, etc.
+• Constants: pi, e | Previous answer: ans
+• Commands:  'history', 'clear', 'exit' or 'quit'
+=======================================================
+
+calc > 12 * (4 + 6) / 2
+=> 60.0
+
+calc > sqrt(ans) + 4
+=> 11.745966692414834
+
+calc > sin(rad(30))
+=> 0.49999999999999994
+
+calc > factorial(5) - 20
+=> 100
+
+calc > history
+
+--- History ---
+1. 12 * (4 + 6) / 2 = 60.0
+2. sqrt(ans) + 4 = 11.745966692414834
+3. sin(rad(30)) = 0.49999999999999994
+4. factorial(5) - 20 = 100
+
+calc > clear
+Reset last result to 0.
+
+calc > __import__('os').system('ls')
+Error: Unsupported syntax structure: Attribute
+
+calc > exit
+Goodbye!
+
 ```bash
 python calculator.py
