@@ -41,11 +41,16 @@ Clone the repository and run:
 
 ## output
 =======================================================
+
  Python Multi-Function Calculator
+
 =======================================================
 • Supports: +, -, *, /, //, %, ** (power)
+
 • Functions: sqrt, cbrt, sin, cos, tan, log, factorial, etc.
+
 • Constants: pi, e | Previous answer: ans
+
 • Commands:  'history', 'clear', 'exit' or 'quit'
 =======================================================
 
