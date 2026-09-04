@@ -1,0 +1,142 @@
+import ast
+import math
+import operator
+
+# Supported operators
+OPERATORS = {
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.Div: operator.truediv,
+    ast.FloorDiv: operator.floordiv,
+    ast.Mod: operator.mod,
+    ast.Pow: operator.pow,
+    ast.USub: operator.neg,
+    ast.UAdd: operator.pos,
+}
+
+# Supported mathematical functions and constants
+SAFE_ENV = {
+    # Constants
+    "pi": math.pi,
+    "e": math.e,
+    # Functions
+    "sqrt": math.sqrt,
+    "cbrt": math.cbrt,
+    "abs": abs,
+    "round": round,
+    "sin": math.sin,
+    "cos": math.cos,
+    "tan": math.tan,
+    "asin": math.asin,
+    "acos": math.acos,
+    "atan": math.atan,
+    "log": math.log,        # natural log: log(x) or log(x, base)
+    "log10": math.log10,
+    "log2": math.log2,
+    "factorial": math.factorial,
+    "deg": math.degrees,
+    "rad": math.radians,
+}
+
+
+class SafeCalculator:
+    def __init__(self):
+        self.last_result = 0
+        self.history = []
+
+    def evaluate(self, expr_str: str):
+        """Safely parses and evaluates a math expression string."""
+        node = ast.parse(expr_str.strip(), mode="eval").body
+        return self._eval_node(node)
+
+    def _eval_node(self, node):
+        if isinstance(node, ast.Constant):  # Numbers (integers, floats)
+            return node.value
+
+        elif isinstance(node, ast.Name):  # Variables: ans, pi, e
+            if node.id == "ans":
+                return self.last_result
+            if node.id in SAFE_ENV:
+                return SAFE_ENV[node.id]
+            raise ValueError(f"Unknown variable/constant: '{node.id}'")
+
+        elif isinstance(node, ast.BinOp):  # Binary operations (a + b, a * b, etc.)
+            left = self._eval_node(node.left)
+            right = self._eval_node(node.right)
+            op_type = type(node.op)
+            if op_type in OPERATORS:
+                return OPERATORS[op_type](left, right)
+            raise ValueError(f"Unsupported operator: {type(node.op).__name__}")
+
+        elif isinstance(node, ast.UnaryOp):  # Unary operations (-x, +x)
+            operand = self._eval_node(node.operand)
+            op_type = type(node.op)
+            if op_type in OPERATORS:
+                return OPERATORS[op_type](operand)
+            raise ValueError(f"Unsupported unary operator: {type(node.op).__name__}")
+
+        elif isinstance(node, ast.Call):  # Functions like sqrt(9), sin(rad(30))
+            if not isinstance(node.func, ast.Name):
+                raise ValueError("Unsupported function call")
+            func_name = node.func.id
+            if func_name not in SAFE_ENV or not callable(SAFE_ENV[func_name]):
+                raise ValueError(f"Unknown function: '{func_name}'")
+
+            args = [self._eval_node(arg) for arg in node.args]
+            return SAFE_ENV[func_name](*args)
+
+        else:
+            raise ValueError(f"Unsupported syntax structure: {type(node).__name__}")
+
+    def run(self):
+        print("=" * 55)
+        print(" Python Multi-Function Calculator")
+        print("=" * 55)
+        print("• Supports: +, -, *, /, //, %, ** (power)")
+        print("• Functions: sqrt, cbrt, sin, cos, tan, log, factorial, etc.")
+        print("• Constants: pi, e | Previous answer: ans")
+        print("• Commands:  'history', 'clear', 'exit' or 'quit'")
+        print("=" * 55)
+
+        while True:
+            try:
+                user_input = input("\ncalc > ").strip()
+                if not user_input:
+                    continue
+
+                cmd = user_input.lower()
+                if cmd in ("exit", "quit", "q"):
+                    print("Goodbye!")
+                    break
+
+                if cmd == "clear":
+                    self.last_result = 0
+                    print("Reset last result to 0.")
+                    continue
+
+                if cmd == "history":
+                    if not self.history:
+                        print("No calculations yet.")
+                    else:
+                        print("\n--- History ---")
+                        for idx, (exp, res) in enumerate(self.history, 1):
+                            print(f"{idx}. {exp} = {res}")
+                    continue
+
+                result = self.evaluate(user_input)
+                self.last_result = result
+                self.history.append((user_input, result))
+                print(f"=> {result}")
+
+            except ZeroDivisionError:
+                print("Error: Division by zero is undefined.")
+            except (SyntaxError, ValueError) as err:
+                print(f"Error: {err}")
+            except Exception as ex:
+                print(f"Error evaluating expression: {ex}")
+
+
+if __name__ == "__main__":
+    calc = SafeCalculator()
+    calc.run()
