@@ -42,9 +42,10 @@ Clone the repository and run:
 ## output
 =======================================================
 
- Python Multi-Function Calculator
+  Python Multi-Function Calculator
 
 =======================================================
+
 • Supports: +, -, *, /, //, %, ** (power)
 
 • Functions: sqrt, cbrt, sin, cos, tan, log, factorial, etc.
@@ -68,7 +69,7 @@ calc > factorial(5) - 20
 
 calc > history
 
---- History ---
+   --- History ---
 1. 12 * (4 + 6) / 2 = 60.0
 2. sqrt(ans) + 4 = 11.745966692414834
 3. sin(rad(30)) = 0.49999999999999994
